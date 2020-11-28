@@ -1,17 +1,12 @@
-#define ARDUINO_ARCH_ESP32
 #include <Arduino.h>
 #include <CAN.h>
 #include <inttypes.h>
 #include <stdlib.h>
 #include <assert.h>
 #include "obd.h"
+#include "hexdump.h"
 
-#define CAN_PIN_RX 4
-#define CAN_PIN_TX 5
-#define CAN_BUS_SPEED 500E3
-
-#define CAN_MAX_FRAME_LEN 8
-#define CAN_DEFAULT_READ_TIMEOUT 500
+const uint8_t CanFlowMsg[] = {0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 struct can_frame {
 	uint32_t can_id;
@@ -40,8 +35,8 @@ int read_frame(uint16_t can_rx, struct can_frame* buffer) {
 	return read_frame(can_rx, CAN_DEFAULT_READ_TIMEOUT, buffer);
 }
 
-int isotp_cmd(uint16_t can_rx, uint16_t can_tx, uint8_t* cmd, size_t cmd_len,
-              void* data_buf, size_t data_len) {
+int isotp_cmd(uint16_t can_rx, uint16_t can_tx, const uint8_t* cmd, size_t cmd_len,
+              uint8_t* data_buf, size_t data_len) {
 
 	assert(cmd_len < CAN_MAX_FRAME_LEN);
 
@@ -49,6 +44,11 @@ int isotp_cmd(uint16_t can_rx, uint16_t can_tx, uint8_t* cmd, size_t cmd_len,
 
 	memcpy(frame.data+1, cmd, cmd_len);
 	frame.data[0] = cmd_len;
+	memset(frame.data + cmd_len + 1, 0, 7 - cmd_len);
+	frame.length = 8;
+
+	Serial.print("Send frame:     ");
+	hexdump(frame.data, frame.length, 8);
 
 	CAN.beginPacket(can_tx);
 	CAN.write(frame.data, frame.length);
@@ -61,6 +61,8 @@ int isotp_cmd(uint16_t can_rx, uint16_t can_tx, uint8_t* cmd, size_t cmd_len,
 	uint8_t frame_idx = 0;
 	while(msg_len == 0 || data_len > data_offset) {
 		read_frame(can_rx, &frame);
+		Serial.print("Received frame: ");
+		hexdump(frame.data, frame.length, 8);
 
 		switch (frame.data[0] & 0xf0) {  // frame_type
 			case 0x00:                    // single frame
@@ -79,14 +81,17 @@ int isotp_cmd(uint16_t can_rx, uint16_t can_tx, uint8_t* cmd, size_t cmd_len,
 				data_offset = frame.length - 2;
 				last_frame_idx = 0;
 
+				Serial.print("Send frame:     ");
+				hexdump((uint8_t*)&CanFlowMsg, sizeof(CanFlowMsg), 8);
+
 				CAN.beginPacket(can_tx);
-				CAN.write("\x30\x00\x00\x00\x00\x00\x00\x00", 8);
+				CAN.write(CanFlowMsg, sizeof(CanFlowMsg));
 				CAN.endPacket();
 				break;
 			case 0x20:                    // continuation frame
 				frame_idx = frame.data[0] & 0x0f;
 
-				assert((last_frame_idx + 1) % 0x10 != frame_idx); // misordered frame received
+				assert((last_frame_idx + 1) % 0x10 == frame_idx); // misordered frame received ?
 
 				payload_len = min(7, msg_len - data_offset);
 				memcpy(data_buf + data_offset, frame.data + 1, payload_len);
@@ -95,17 +100,10 @@ int isotp_cmd(uint16_t can_rx, uint16_t can_tx, uint8_t* cmd, size_t cmd_len,
 				break;
 			case 0x30:                    // flow control frame
 				// Flow control frame, cannot handle, should never see this
+				assert(false);
 				break;
 		}
 	}
 }
-
-/*int main() {
-	CAN.setPins(CAN_PIN_RX, CAN_PIN_TX);
-
-	if (CAN.begin(CAN_BUS_SPEED)) {
-		CAN.end();
-	}
-};*/
 
 // vim: ts=3 sw=3
