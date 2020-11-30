@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP OBD2
+D r/a 4mm pitch connector
+K
+F https://www.obd2-shop.eu/files/obd_pcb-th.pdf
+$ENDCMP
+#
+#End Doc Library
