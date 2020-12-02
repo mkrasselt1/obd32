@@ -313,12 +313,12 @@ $EndComp
 $Comp
 L power:+BATT #PWR0124
 U 1 1 5FC7D71E
-P 650 6400
-F 0 "#PWR0124" H 650 6250 50  0001 C CNN
-F 1 "+BATT" H 550 6550 50  0000 L CNN
-F 2 "" H 650 6400 50  0001 C CNN
-F 3 "" H 650 6400 50  0001 C CNN
-	1    650  6400
+P 650 5800
+F 0 "#PWR0124" H 650 5650 50  0001 C CNN
+F 1 "+BATT" H 550 5950 50  0000 L CNN
+F 2 "" H 650 5800 50  0001 C CNN
+F 3 "" H 650 5800 50  0001 C CNN
+	1    650  5800
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -397,7 +397,6 @@ Wire Wire Line
 	1450 7550 1850 7550
 Wire Wire Line
 	1850 7000 1950 7000
-Connection ~ 650  6400
 Wire Wire Line
 	650  6400 650  7250
 $Comp
@@ -1667,4 +1666,20 @@ Wire Wire Line
 Wire Wire Line
 	4800 6050 4900 6050
 Connection ~ 4900 6050
+$Comp
+L Jumper:SolderJumper_2_Bridged JP1
+U 1 1 5FC8024A
+P 650 6100
+F 0 "JP1" V 604 6168 50  0000 L CNN
+F 1 "SolderJumper_2_Bridged" H 300 6000 50  0000 L CNN
+F 2 "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm" H 650 6100 50  0001 C CNN
+F 3 "~" H 650 6100 50  0001 C CNN
+	1    650  6100
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	650  6250 650  6400
+Connection ~ 650  6400
+Wire Wire Line
+	650  5800 650  5950
 $EndSCHEMATC
