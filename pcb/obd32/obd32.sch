@@ -770,34 +770,6 @@ Wire Wire Line
 Wire Wire Line
 	9650 6050 9650 6150
 $Comp
-L Sensor_Pressure:LPS25HB U7
-U 1 1 5FC7D0E2
-P 8050 1500
-F 0 "U7" H 8150 2100 50  0000 R CNN
-F 1 "LPS25HB" H 8400 2000 50  0000 R CNN
-F 2 "Package_LGA:ST_HLGA-10_2.5x2.5mm_P0.6mm_LayoutBorder3x2y" H 8050 1300 50  0001 C CNN
-F 3 "www.st.com/resource/en/datasheet/lps25hb.pdf" H 8100 1150 50  0001 C CNN
-	1    8050 1500
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	7950 1100 9050 1100
-Wire Wire Line
-	9050 1100 9050 1600
-Wire Wire Line
-	9050 1600 8550 1600
-$Comp
-L power:+3.3V #PWR0135
-U 1 1 5FC83F56
-P 7850 950
-F 0 "#PWR0135" H 7850 800 50  0001 C CNN
-F 1 "+3.3V" H 7865 1123 50  0000 C CNN
-F 2 "" H 7850 950 50  0001 C CNN
-F 3 "" H 7850 950 50  0001 C CNN
-	1    7850 950 
-	1    0    0    -1  
-$EndComp
-$Comp
 L power:+3.3V #PWR0136
 U 1 1 5FC8480D
 P 7000 2250
@@ -811,21 +783,21 @@ $EndComp
 $Comp
 L power:GND #PWR0137
 U 1 1 5FC84E03
-P 7950 2000
-F 0 "#PWR0137" H 7950 1750 50  0001 C CNN
-F 1 "GND" H 7955 1827 50  0000 C CNN
-F 2 "" H 7950 2000 50  0001 C CNN
-F 3 "" H 7950 2000 50  0001 C CNN
-	1    7950 2000
+P 8400 1800
+F 0 "#PWR0137" H 8400 1550 50  0001 C CNN
+F 1 "GND" H 8405 1627 50  0000 C CNN
+F 2 "" H 8400 1800 50  0001 C CNN
+F 3 "" H 8400 1800 50  0001 C CNN
+	1    8400 1800
 	1    0    0    -1  
 $EndComp
 Text GLabel 4650 2650 2    50   BiDi ~ 0
 I2C0_SDA
 Text GLabel 4650 2750 2    50   BiDi ~ 0
 I2C0_SCL
-Text GLabel 8550 1300 2    50   BiDi ~ 0
+Text GLabel 7900 1400 0    50   BiDi ~ 0
 I2C0_SDA
-Text GLabel 8550 1500 2    50   BiDi ~ 0
+Text GLabel 7900 1300 0    50   BiDi ~ 0
 I2C0_SCL
 Text GLabel 4650 3450 2    50   Input ~ 0
 IMU_INT
@@ -1015,49 +987,18 @@ F 3 "" H 6100 950 50  0001 C CNN
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
-	7950 1100 7850 1100
-Connection ~ 7950 1100
-Connection ~ 7850 1100
-$Comp
-L Device:C C18
-U 1 1 5FCF3A0C
-P 7700 950
-F 0 "C18" V 7900 1100 50  0000 L CNN
-F 1 "0.1µF" V 7800 1000 50  0000 L CNN
-F 2 "Capacitor_SMD:C_0201_0603Metric" H 7738 800 50  0001 C CNN
-F 3 "~" H 7700 950 50  0001 C CNN
-	1    7700 950 
-	0    -1   -1   0   
-$EndComp
-Wire Wire Line
-	7850 1100 7850 950 
-Connection ~ 7850 950 
-$Comp
-L power:GND #PWR0146
-U 1 1 5FCF66CC
-P 7550 950
-F 0 "#PWR0146" H 7550 700 50  0001 C CNN
-F 1 "GND" H 7555 777 50  0000 C CNN
-F 2 "" H 7550 950 50  0001 C CNN
-F 3 "" H 7550 950 50  0001 C CNN
-	1    7550 950 
-	1    0    0    -1  
-$EndComp
+	8400 1100 8300 1100
 $Comp
 L power:GND #PWR0147
 U 1 1 5FCF7087
-P 8550 1400
-F 0 "#PWR0147" H 8550 1150 50  0001 C CNN
-F 1 "GND" V 8555 1227 50  0000 C CNN
-F 2 "" H 8550 1400 50  0001 C CNN
-F 3 "" H 8550 1400 50  0001 C CNN
-	1    8550 1400
-	0    -1   -1   0   
+P 7900 1500
+F 0 "#PWR0147" H 7900 1250 50  0001 C CNN
+F 1 "GND" V 7905 1327 50  0000 C CNN
+F 2 "" H 7900 1500 50  0001 C CNN
+F 3 "" H 7900 1500 50  0001 C CNN
+	1    7900 1500
+	0    1    1    0   
 $EndComp
-Text GLabel 8550 1800 2    50   Output ~ 0
-BARO_INT
-Text GLabel 4650 2450 2    50   Input ~ 0
-BARO_INT
 $Comp
 L OBD2:OBD2 J3
 U 1 1 5FCF987D
@@ -1682,4 +1623,66 @@ Wire Wire Line
 Connection ~ 650  6400
 Wire Wire Line
 	650  5800 650  5950
+$Comp
+L Sensor_Pressure:BMP280 U7
+U 1 1 5FC9765F
+P 8300 1500
+F 0 "U7" H 8530 1596 50  0000 L CNN
+F 1 "BMP280" H 8530 1505 50  0000 L CNN
+F 2 "Package_LGA:Bosch_LGA-8_2x2.5mm_P0.65mm_ClockwisePinNumbering" H 8300 800 50  0001 C CNN
+F 3 "https://ae-bst.resource.bosch.com/media/_tech/media/datasheets/BST-BMP280-DS001.pdf" H 8300 1500 50  0001 C CNN
+	1    8300 1500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8300 1800 8400 1800
+Connection ~ 8400 1800
+Connection ~ 8300 1100
+$Comp
+L power:GND #PWR0146
+U 1 1 5FCF66CC
+P 8000 950
+F 0 "#PWR0146" H 8000 700 50  0001 C CNN
+F 1 "GND" H 8005 777 50  0000 C CNN
+F 2 "" H 8000 950 50  0001 C CNN
+F 3 "" H 8000 950 50  0001 C CNN
+	1    8000 950 
+	1    0    0    -1  
+$EndComp
+Connection ~ 8300 950 
+Wire Wire Line
+	8300 1100 8300 950 
+$Comp
+L Device:C C18
+U 1 1 5FCF3A0C
+P 8150 950
+F 0 "C18" V 8350 1100 50  0000 L CNN
+F 1 "0.1µF" V 8250 1000 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 8188 800 50  0001 C CNN
+F 3 "~" H 8150 950 50  0001 C CNN
+	1    8150 950 
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:+3.3V #PWR0135
+U 1 1 5FC83F56
+P 8300 950
+F 0 "#PWR0135" H 8300 800 50  0001 C CNN
+F 1 "+3.3V" H 8315 1123 50  0000 C CNN
+F 2 "" H 8300 950 50  0001 C CNN
+F 3 "" H 8300 950 50  0001 C CNN
+	1    8300 950 
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:+3.3V #PWR0159
+U 1 1 5FCB11BC
+P 7900 1600
+F 0 "#PWR0159" H 7900 1450 50  0001 C CNN
+F 1 "+3.3V" V 7900 1800 50  0000 C CNN
+F 2 "" H 7900 1600 50  0001 C CNN
+F 3 "" H 7900 1600 50  0001 C CNN
+	1    7900 1600
+	0    -1   -1   0   
+$EndComp
 $EndSCHEMATC
