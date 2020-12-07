@@ -24,14 +24,12 @@ F 3 "https://www.espressif.com/sites/default/files/documentation/esp32-wroom-32_
 	1    4050 2350
 	1    0    0    -1  
 $EndComp
-Text GLabel 9450 2650 0    50   Input ~ 0
+Text GLabel 9450 2650 0    50   Output ~ 0
 CAN_RX
-Text GLabel 9450 2550 0    50   Output ~ 0
+Text GLabel 9450 2550 0    50   Input ~ 0
 CAN_TX
-Text GLabel 4650 1750 2    50   Input ~ 0
+Text GLabel 4650 1750 2    50   Output ~ 0
 CAN_TX
-Text GLabel 4650 1950 2    50   Output ~ 0
-CAN_RX
 Text GLabel 10850 2600 2    50   BiDi ~ 0
 CAN_H
 Text GLabel 9750 1350 0    50   BiDi ~ 0
@@ -76,23 +74,23 @@ $EndComp
 $Comp
 L power:+3.3V #PWR0103
 U 1 1 5FC3DA30
-P 4050 950
-F 0 "#PWR0103" H 4050 800 50  0001 C CNN
-F 1 "+3.3V" H 4065 1123 50  0000 C CNN
-F 2 "" H 4050 950 50  0001 C CNN
-F 3 "" H 4050 950 50  0001 C CNN
-	1    4050 950 
-	1    0    0    -1  
+P 3200 500
+F 0 "#PWR0103" H 3200 350 50  0001 C CNN
+F 1 "+3.3V" V 3200 750 50  0000 C CNN
+F 2 "" H 3200 500 50  0001 C CNN
+F 3 "" H 3200 500 50  0001 C CNN
+	1    3200 500 
+	0    -1   -1   0   
 $EndComp
 $Comp
 L power:GND #PWR0105
 U 1 1 5FC4596A
-P 600 2350
-F 0 "#PWR0105" H 600 2100 50  0001 C CNN
-F 1 "GND" H 605 2177 50  0000 C CNN
-F 2 "" H 600 2350 50  0001 C CNN
-F 3 "" H 600 2350 50  0001 C CNN
-	1    600  2350
+P 600 2250
+F 0 "#PWR0105" H 600 2000 50  0001 C CNN
+F 1 "GND" H 605 2077 50  0000 C CNN
+F 2 "" H 600 2250 50  0001 C CNN
+F 3 "" H 600 2250 50  0001 C CNN
+	1    600  2250
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -618,50 +616,47 @@ SD_DAT1
 $Comp
 L power:GND #PWR0130
 U 1 1 5FD10D99
-P 2950 1650
-F 0 "#PWR0130" H 2950 1400 50  0001 C CNN
-F 1 "GND" H 2955 1477 50  0000 C CNN
-F 2 "" H 2950 1650 50  0001 C CNN
-F 3 "" H 2950 1650 50  0001 C CNN
-	1    2950 1650
+P 1850 1350
+F 0 "#PWR0130" H 1850 1100 50  0001 C CNN
+F 1 "GND" H 1855 1177 50  0000 C CNN
+F 2 "" H 1850 1350 50  0001 C CNN
+F 3 "" H 1850 1350 50  0001 C CNN
+	1    1850 1350
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:+BATT #PWR0131
 U 1 1 5FD11B7C
-P 2950 1050
-F 0 "#PWR0131" H 2950 900 50  0001 C CNN
-F 1 "+BATT" H 2850 1200 50  0000 L CNN
-F 2 "" H 2950 1050 50  0001 C CNN
-F 3 "" H 2950 1050 50  0001 C CNN
-	1    2950 1050
+P 1850 750
+F 0 "#PWR0131" H 1850 600 50  0001 C CNN
+F 1 "+BATT" H 1750 900 50  0000 L CNN
+F 2 "" H 1850 750 50  0001 C CNN
+F 3 "" H 1850 750 50  0001 C CNN
+	1    1850 750 
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:R R8
 U 1 1 5FD123F3
-P 2950 1500
-F 0 "R8" H 2880 1454 50  0000 R CNN
-F 1 "27K" H 2880 1545 50  0000 R CNN
-F 2 "Resistor_SMD:R_0201_0603Metric" V 2880 1500 50  0001 C CNN
-F 3 "~" H 2950 1500 50  0001 C CNN
-	1    2950 1500
+P 1850 1200
+F 0 "R8" H 1780 1154 50  0000 R CNN
+F 1 "27K" H 1780 1245 50  0000 R CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 1780 1200 50  0001 C CNN
+F 3 "~" H 1850 1200 50  0001 C CNN
+	1    1850 1200
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:R R7
 U 1 1 5FD12C00
-P 2950 1200
-F 0 "R7" H 2880 1154 50  0000 R CNN
-F 1 "100K" H 2880 1245 50  0000 R CNN
-F 2 "Resistor_SMD:R_0201_0603Metric" V 2880 1200 50  0001 C CNN
-F 3 "~" H 2950 1200 50  0001 C CNN
-	1    2950 1200
+P 1850 900
+F 0 "R7" H 1780 854 50  0000 R CNN
+F 1 "100K" H 1780 945 50  0000 R CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 1780 900 50  0001 C CNN
+F 3 "~" H 1850 900 50  0001 C CNN
+	1    1850 900 
 	1    0    0    -1  
 $EndComp
-Wire Wire Line
-	3450 1350 2950 1350
-Connection ~ 2950 1350
 $Comp
 L Regulator_Linear:AZ1117-3.3 U3
 U 1 1 5FD19394
@@ -791,10 +786,6 @@ F 3 "" H 8400 1800 50  0001 C CNN
 	1    8400 1800
 	1    0    0    -1  
 $EndComp
-Text GLabel 4650 2650 2    50   BiDi ~ 0
-I2C0_SDA
-Text GLabel 4650 2750 2    50   BiDi ~ 0
-I2C0_SCL
 Text GLabel 7900 1400 0    50   BiDi ~ 0
 I2C0_SDA
 Text GLabel 7900 1300 0    50   BiDi ~ 0
@@ -1034,12 +1025,12 @@ UART_RX
 $Comp
 L Switch:SW_Push SW1
 U 1 1 5FEEEFF0
-P 800 2350
-F 0 "SW1" H 800 2635 50  0000 C CNN
-F 1 "SW_Push" H 800 2544 50  0000 C CNN
-F 2 "Button_Switch_SMD:SW_SPST_B3U-3000P-B" H 800 2550 50  0001 C CNN
-F 3 "~" H 800 2550 50  0001 C CNN
-	1    800  2350
+P 950 2250
+F 0 "SW1" H 950 2535 50  0000 C CNN
+F 1 "SW_Push" H 950 2444 50  0000 C CNN
+F 2 "Button_Switch_SMD:SW_SPST_B3U-3000P-B" H 950 2450 50  0001 C CNN
+F 3 "~" H 950 2450 50  0001 C CNN
+	1    950  2250
 	1    0    0    -1  
 $EndComp
 Text GLabel 3450 1150 0    50   Input ~ 0
@@ -1047,26 +1038,26 @@ ESP32_EN
 $Comp
 L Device:R R5
 U 1 1 5FEFEA55
-P 1000 2200
-F 0 "R5" H 930 2154 50  0000 R CNN
-F 1 "100K" H 930 2245 50  0000 R CNN
-F 2 "Resistor_SMD:R_0201_0603Metric" V 930 2200 50  0001 C CNN
-F 3 "~" H 1000 2200 50  0001 C CNN
-	1    1000 2200
+P 1150 2100
+F 0 "R5" H 1080 2054 50  0000 R CNN
+F 1 "10K" H 1080 2145 50  0000 R CNN
+F 2 "Resistor_SMD:R_0201_0603Metric" V 1080 2100 50  0001 C CNN
+F 3 "~" H 1150 2100 50  0001 C CNN
+	1    1150 2100
 	-1   0    0    1   
 $EndComp
 Wire Wire Line
-	1100 2350 1000 2350
-Connection ~ 1000 2350
+	1250 2250 1150 2250
+Connection ~ 1150 2250
 $Comp
 L power:+3.3V #PWR0119
 U 1 1 5FF01EFD
-P 1000 2050
-F 0 "#PWR0119" H 1000 1900 50  0001 C CNN
-F 1 "+3.3V" H 1015 2223 50  0000 C CNN
-F 2 "" H 1000 2050 50  0001 C CNN
-F 3 "" H 1000 2050 50  0001 C CNN
-	1    1000 2050
+P 1150 1950
+F 0 "#PWR0119" H 1150 1800 50  0001 C CNN
+F 1 "+3.3V" H 1165 2123 50  0000 C CNN
+F 2 "" H 1150 1950 50  0001 C CNN
+F 3 "" H 1150 1950 50  0001 C CNN
+	1    1150 1950
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -1131,10 +1122,6 @@ F 3 "" H 800 5250 50  0001 C CNN
 $EndComp
 NoConn ~ 800  5150
 NoConn ~ 800  5050
-Text GLabel 4650 2050 2    50   Input ~ 0
-GPS_RX
-Text GLabel 4650 1350 2    50   Output ~ 0
-GPS_TX
 Text GLabel 5400 4850 2    50   Input ~ 0
 UART_TX
 $Comp
@@ -1148,9 +1135,9 @@ F 3 "" H 850 750 50  0001 C CNN
 	1    850  750 
 	0    1    1    0   
 $EndComp
-Text GLabel 850  850  0    50   Input ~ 0
+Text GLabel 850  950  0    50   Input ~ 0
 GPS_TX
-Text GLabel 850  950  0    50   Output ~ 0
+Text GLabel 850  850  0    50   Output ~ 0
 GPS_RX
 $Comp
 L Regulator_Switching:LMR33630BDDA U1
@@ -1212,59 +1199,34 @@ F 3 "" H 1700 5250 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Connection ~ 1700 5250
-Text GLabel 1100 3100 2    50   Output ~ 0
+Text GLabel 1100 3050 2    50   Output ~ 0
 ESP32_MISC
 Wire Wire Line
-	1100 3100 1000 3100
-Connection ~ 1000 3100
+	1100 3050 1000 3050
 $Comp
 L power:GND #PWR0148
 U 1 1 5FC9BDCA
-P 600 3100
-F 0 "#PWR0148" H 600 2850 50  0001 C CNN
-F 1 "GND" H 605 2927 50  0000 C CNN
-F 2 "" H 600 3100 50  0001 C CNN
-F 3 "" H 600 3100 50  0001 C CNN
-	1    600  3100
+P 600 3050
+F 0 "#PWR0148" H 600 2800 50  0001 C CNN
+F 1 "GND" H 605 2877 50  0000 C CNN
+F 2 "" H 600 3050 50  0001 C CNN
+F 3 "" H 600 3050 50  0001 C CNN
+	1    600  3050
 	1    0    0    -1  
 $EndComp
 $Comp
 L Switch:SW_Push SW2
 U 1 1 5FC9BDD4
-P 800 3100
-F 0 "SW2" H 800 3385 50  0000 C CNN
-F 1 "SW_Push" H 800 3294 50  0000 C CNN
-F 2 "Button_Switch_SMD:SW_SPST_B3U-3000P-B" H 800 3300 50  0001 C CNN
-F 3 "~" H 800 3300 50  0001 C CNN
-	1    800  3100
+P 800 3050
+F 0 "SW2" H 800 3335 50  0000 C CNN
+F 1 "SW_Push" H 800 3244 50  0000 C CNN
+F 2 "Button_Switch_SMD:SW_SPST_B3U-3000P-B" H 800 3250 50  0001 C CNN
+F 3 "~" H 800 3250 50  0001 C CNN
+	1    800  3050
 	1    0    0    -1  
 $EndComp
-$Comp
-L Device:R R6
-U 1 1 5FC9BDDF
-P 1000 2950
-F 0 "R6" H 930 2904 50  0000 R CNN
-F 1 "100K" H 930 2995 50  0000 R CNN
-F 2 "Resistor_SMD:R_0201_0603Metric" V 930 2950 50  0001 C CNN
-F 3 "~" H 1000 2950 50  0001 C CNN
-	1    1000 2950
-	-1   0    0    1   
-$EndComp
-$Comp
-L power:+3.3V #PWR0149
-U 1 1 5FC9BDEB
-P 1000 2800
-F 0 "#PWR0149" H 1000 2650 50  0001 C CNN
-F 1 "+3.3V" H 1015 2973 50  0000 C CNN
-F 2 "" H 1000 2800 50  0001 C CNN
-F 3 "" H 1000 2800 50  0001 C CNN
-	1    1000 2800
-	1    0    0    -1  
-$EndComp
-Text GLabel 1100 2350 2    50   Output ~ 0
+Text GLabel 1250 2250 2    50   Output ~ 0
 ESP32_EN
-Text GLabel 4650 2950 2    50   Input ~ 0
-ESP32_MISC
 $Comp
 L Device:LED D3
 U 1 1 5FCC18B7
@@ -1372,10 +1334,6 @@ F 3 "" H 1600 4350 50  0001 C CNN
 $EndComp
 Text GLabel 4650 1550 2    50   Output ~ 0
 LED_R
-Text GLabel 4650 2150 2    50   Output ~ 0
-LED_G
-Text GLabel 4650 2250 2    50   Output ~ 0
-LED_B
 $Comp
 L Connector:USB_C_Receptacle_USB2.0 J1
 U 1 1 5FCEDA3B
@@ -1685,4 +1643,119 @@ F 3 "" H 7900 1600 50  0001 C CNN
 	1    7900 1600
 	0    -1   -1   0   
 $EndComp
+Text GLabel 4650 2950 2    50   Input ~ 0
+ESP32_MISC
+$Comp
+L Device:C C21
+U 1 1 5FCE6CCF
+P 3700 650
+F 0 "C21" H 3350 650 50  0000 L CNN
+F 1 "0.1µF" H 3350 550 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 3738 500 50  0001 C CNN
+F 3 "~" H 3700 650 50  0001 C CNN
+	1    3700 650 
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GND #PWR0149
+U 1 1 5FCE6CD5
+P 3700 800
+F 0 "#PWR0149" H 3700 550 50  0001 C CNN
+F 1 "GND" H 3705 627 50  0000 C CNN
+F 2 "" H 3700 800 50  0001 C CNN
+F 3 "" H 3700 800 50  0001 C CNN
+	1    3700 800 
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4050 500  3700 500 
+$Comp
+L Device:C C20
+U 1 1 5FCE6CDC
+P 3200 650
+F 0 "C20" H 2850 650 50  0000 L CNN
+F 1 "10µF" H 2850 550 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 3238 500 50  0001 C CNN
+F 3 "~" H 3200 650 50  0001 C CNN
+	1    3200 650 
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3700 500  3200 500 
+Connection ~ 3700 500 
+Wire Wire Line
+	3200 800  3700 800 
+Connection ~ 3700 800 
+Connection ~ 3200 500 
+Wire Wire Line
+	4050 950  4050 500 
+Text GLabel 4650 1150 2    50   Input ~ 0
+BOOT0
+$Comp
+L power:GND #PWR0160
+U 1 1 5FCF54FC
+P 2400 3050
+F 0 "#PWR0160" H 2400 2800 50  0001 C CNN
+F 1 "GND" H 2405 2877 50  0000 C CNN
+F 2 "" H 2400 3050 50  0001 C CNN
+F 3 "" H 2400 3050 50  0001 C CNN
+	1    2400 3050
+	1    0    0    -1  
+$EndComp
+$Comp
+L Switch:SW_Push SW3
+U 1 1 5FCF5502
+P 2200 3050
+F 0 "SW3" H 2200 3335 50  0000 C CNN
+F 1 "SW_Push" H 2200 3244 50  0000 C CNN
+F 2 "Button_Switch_SMD:SW_SPST_B3U-3000P-B" H 2200 3250 50  0001 C CNN
+F 3 "~" H 2200 3250 50  0001 C CNN
+	1    2200 3050
+	1    0    0    -1  
+$EndComp
+Text GLabel 2000 3050 0    50   Output ~ 0
+BOOT0
+$Comp
+L Device:C C19
+U 1 1 5FD0124F
+P 950 2400
+F 0 "C19" V 800 2450 50  0000 L CNN
+F 1 "1µF" V 800 2200 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0201_0603Metric" H 988 2250 50  0001 C CNN
+F 3 "~" H 950 2400 50  0001 C CNN
+	1    950  2400
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	600  2250 750  2250
+Wire Wire Line
+	750  2250 750  2400
+Connection ~ 750  2250
+Wire Wire Line
+	1150 2400 1150 2250
+Wire Wire Line
+	1100 2400 1150 2400
+Wire Wire Line
+	750  2400 800  2400
+Text GLabel 4650 2750 2    50   BiDi ~ 0
+I2C0_SCL
+Text GLabel 4650 2650 2    50   BiDi ~ 0
+I2C0_SDA
+Text GLabel 4650 1350 2    50   Output ~ 0
+GPS_TX
+Text GLabel 4650 2050 2    50   Input ~ 0
+GPS_RX
+Text GLabel 4650 2250 2    50   Output ~ 0
+LED_B
+Text GLabel 4650 2150 2    50   Output ~ 0
+LED_G
+Text GLabel 4650 1950 2    50   Input ~ 0
+CAN_RX
+Text GLabel 1950 1050 2    50   Output ~ 0
+ADC
+Text GLabel 3450 1350 0    50   Input ~ 0
+ADC
+Wire Wire Line
+	1950 1050 1850 1050
+Connection ~ 1850 1050
 $EndSCHEMATC
