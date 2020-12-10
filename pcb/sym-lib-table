@@ -1,0 +1,5 @@
+(sym_lib_table
+  (lib (name ICM-20689)(type Legacy)(uri ${KIPRJMOD}/library/ICM-20689.lib)(options "")(descr ""))
+  (lib (name OBD2)(type Legacy)(uri ${KIPRJMOD}/library/OBD2.lib)(options "")(descr ""))
+  (lib (name 67329-8040)(type Legacy)(uri ${KIPRJMOD}/library/67329-8040.lib)(options "")(descr ""))
+)
