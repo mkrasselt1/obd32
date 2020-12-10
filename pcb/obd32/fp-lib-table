@@ -1,7 +1,0 @@
-(fp_lib_table
-  (lib (name ICM-20689)(type Legacy)(uri ${KIPRJMOD}/library/ICM-20689.mod)(options "")(descr ""))
-  (lib (name OBD2)(type Legacy)(uri ${KIPRJMOD}/library/OBD2.mod)(options "")(descr ""))
-  (lib (name 67329-8040)(type Legacy)(uri ${KIPRJMOD}/library/67329-8040.mod)(options "")(descr ""))
-  (lib (name FDA1254-H-8R0M=P3)(type Legacy)(uri ${KIPRJMOD}/library/FDA1254-H-8R0M=P3.mod)(options "")(descr ""))
-  (lib (name TDK_SPM5030)(type KiCad)(uri ${KIPRJMOD}/library/TDK_SPM5030.pretty)(options "")(descr ""))
-)
