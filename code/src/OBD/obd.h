@@ -9,5 +9,5 @@
 #define CAN_MAX_FRAME_LEN 8
 #define CAN_DEFAULT_READ_TIMEOUT 500
 
-void isotp_cmd(uint32_t can_rx, uint32_t can_tx, uint8_t* cmd, size_t cmd_len, uint8_t* data_buf, size_t data_len);
+void isotp_cmd(uint32_t can_rx, uint32_t can_tx, const uint8_t* cmd, size_t cmd_len, uint8_t* data_buf, size_t data_len);
 
