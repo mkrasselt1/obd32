@@ -1,0 +1,44 @@
+{
+  "endpoints": [
+    {
+      "type": "wss",
+      "url": "wss://v3.evpaths.app/api",
+      "username": "REDACTED_USERNAME",
+      "token": "REDACTED_API_TOKEN",
+      "fields": "all",
+      "intervall": 1000
+    },
+    {
+      "type": "server"
+    },
+    {
+      "type": "mqtt",
+      "url": "YOUR_MQTT_HOST",
+      "username": "openhabian",
+      "token": "openhabian",
+      "basetopic": "obd32/ioniq/",
+      "intervall": 1000
+    }
+  ],
+  "wlan": {
+    "mode": "client",
+    "ssid": "YOUR_SSID",
+    "password": "YOUR_WIFI_PASSWORD",
+    "ip": "YOUR_DEVICE_IP",
+    "gateway": "YOUR_GATEWAY",
+    "dns": "YOUR_GATEWAY"
+  },
+  "sleep": {
+    "time": 60000,
+    "output": true,
+    "gps": true,
+    "wakeupat": 14.3,
+    "sleepbelow": 12.6
+  },
+  "log": {
+    "voltage": true,
+    "location": true,
+    "interval": 600000,
+    "rotate": "daily"
+  }
+}

@@ -1,32 +1,29 @@
 #include <Arduino.h>
 #include <CAN.h>
 #include <WiFi.h>
+#include <HTTPClient.h>
 #include <WiFiMulti.h>
-#include <ESPAsync_WiFiManager.h>
 #include <DNSServer.h>
+#include <ArduinoJson.h>
 #include <PubSubClient.h>
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP280.h>
 #include <TinyGPS++.h>
-#include "obd.h"
-#include "ioniq_bev.h"
-#include "vehicle_data.h"
+#include "../src/OBD/obd.h"
+#include "../src/VehicleData/Hyundai_Ioniq/ioniq_bev.h"
+#include "../src/VehicleData/vehicle_data.h"
+#include "./EvNotify/EvNotify.h"
+#include "gps.h"
 #include "pins.h"
-#include "setup.h"
 
 //Wifi Credentials
 const char* ap_ssid = "OBD32";
 const char* ap_password =  "secret";
 const char* sta_ssid = "AP";
 const char* sta_password =  "PW";
-#define mqtt_server "SERVERNAME_OR_IP"
-#define mqtt_port 1883
-#define mqtt_user "USERNAME"
-#define mqtt_password "PASSWORD"
 
-#define AP_SSID "OBD32_Setup"
-#define AP_PWD ""
+#define vers "0.0.1"
 
 #define I2C_SPEED 100000 // 100kHz
 
@@ -36,10 +33,16 @@ const char* sta_password =  "PW";
 
 WiFiMulti wifiMulti;
 WiFiClient espClient;
-PubSubClient mqtt(espClient);
+WiFiClientSecure espClientSecure;
 TwoWire I2C = TwoWire(0);
 Adafruit_BMP280 bmp;
+TinyGPSPlus gps;
+HardwareSerial GPS_serial(2);
+HTTPClient http;
+
 int state = 0;
+char evnotify_akey[] ="bfddba";
+char evnotify_token[] = "ccf59da76a0caa94cb4a";
 
 void setup() {
    pinMode(GPIO_BTN1, INPUT_PULLUP);
@@ -49,14 +52,35 @@ void setup() {
    pinMode(GPIO_LED_B, OUTPUT);
 
    Serial.begin(115200);
-   Serial2.begin(9600, SERIAL_8N1, GPIO_GPS_RX, GPIO_GPS_TX);
+   while (!Serial);
+   GPS_serial.begin(9600, SERIAL_8N1, GPIO_GPS_RX, GPIO_GPS_TX);
 
+   if (digitalRead(GPIO_BTN1) == LOW) {
+      WiFi.mode(WIFI_AP);
+      WiFi.softAP(ap_ssid, ap_password);
+   }else {
+      //Start Wifi
+      WiFi.begin(sta_ssid, sta_password);
+      Serial.println("Connecting to WiFi");
+      while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+      } 
+      Serial.println("WiFi connected");
+      Serial.println("IP address: ");
+      Serial.println(WiFi.localIP());
+
+      Serial.println("Setup done.");
+   }
+
+
+  //Start GPS
+  GPS_serial.begin(9600, SERIAL_8N1, 16, 17);
    //I2C.begin(GPIO_I2C0_SDA, GPIO_I2C0_SCL, I2C_SPEED);
    //if(bme.begin(&I2C));
    //bmp.readTemperature()
    //bmp.readPressure()
 
-   while (!Serial);
 
    //Start CAN
    CAN.setPins(GPIO_CAN_RX, GPIO_CAN_TX);
@@ -66,47 +90,17 @@ void setup() {
       } else {
       	 Serial.println(F("Can init success")); break;
       }
-   }
+   }   while (!Serial);
 
-   //MQTT
-   mqtt.setServer(mqtt_server, mqtt_port);
-   if (mqtt.connect("odb32", mqtt_user, mqtt_password)) {
-      mqtt.publish("odb32/status","running");
-      mqtt.subscribe("odb32/settings");
-   }
-
-
-   if (digitalRead(GPIO_BTN1) == LOW) {
-      WiFi.mode(WIFI_AP);
-      WiFi.softAP(AP_SSID, AP_PWD);
-   }
-
-   WiFi.begin(sta_ssid, sta_password);
-
-   //Start Wifi
-   Serial.print("Connecting to WiFi ");
-   while (WiFi.status() != WL_CONNECTED) {
-      delay(500);
-      Serial.print(".");
-   }
-   Serial.println();
-   Serial.println("WiFi connected");
-   Serial.println("IP address: ");
-   Serial.println(WiFi.localIP());
-
-   Serial.println("Setup done.");
+  // businessLogic::init(vers);
 }
 
-void loop()
-{
-   if (state & STATE_SETUP) {
-      if (! (state & STATE_SETUP_RUNNING)) {
-         initSetup();
-      }
-   }
-   //vehicle_data_t vdata;
-   //decode_ioniq_bev(&vdata);
-
-   mqtt.loop();
+void loop(){
+  vehicle_data_t vdata;
+  decode_ioniq_bev(&vdata);
+  //Read GPS
+  while (GPS_serial.available() > 0) {
+    gps.encode(GPS_serial.read());
+  }
 }
 // vim: sw=3 sts=3 expandtab

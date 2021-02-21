@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "obd.h"
-#include "hexdump.h"
+#include "../src/HEXDUMP/hexdump.h"
 
 const uint8_t CanFlowMsg[] = {0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
@@ -14,7 +14,7 @@ struct can_frame {
 	uint8_t data[CAN_MAX_FRAME_LEN];
 };
 
-int read_frame(uint16_t can_rx, uint16_t timeout, struct can_frame* buffer) {
+void read_frame(uint16_t can_rx, uint16_t timeout, struct can_frame* buffer) {
 	// Busy wait for response
 
 	CAN.filter(can_rx);
@@ -31,12 +31,11 @@ int read_frame(uint16_t can_rx, uint16_t timeout, struct can_frame* buffer) {
 	buffer->length = packet_size;
 	CAN.readBytes(buffer->data, buffer->length);
 }
-int read_frame(uint16_t can_rx, struct can_frame* buffer) {
-	return read_frame(can_rx, CAN_DEFAULT_READ_TIMEOUT, buffer);
+void read_frame(uint16_t can_rx, struct can_frame* buffer) {
+	read_frame(can_rx, CAN_DEFAULT_READ_TIMEOUT, buffer);
 }
 
-int isotp_cmd(uint16_t can_rx, uint16_t can_tx, const uint8_t* cmd, size_t cmd_len,
-              uint8_t* data_buf, size_t data_len) {
+void isotp_cmd(uint16_t can_rx, uint16_t can_tx, const uint8_t* cmd, size_t cmd_len, uint8_t* data_buf, size_t data_len) {
 
 	assert(cmd_len < CAN_MAX_FRAME_LEN);
 
