@@ -13,4 +13,4 @@
 #define GPIO_LED_R 4
 #define GPIO_LED_G 16
 #define GPIO_LED_B 17
-
+#define GPIO_CS_SDCARD 4    // Chip Select SD Card

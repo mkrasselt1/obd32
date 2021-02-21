@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include <inttypes.h>
 #include <stdio.h>
-#include "obd.h"
-#include "hexdump.h"
-#include "vehicle_data.h"
+#include "../../OBD/obd.h"
+#include "../src/HEXDUMP/hexdump.h"
+#include "../vehicle_data.h"
 
 #pragma pack(push, 1)
 struct {
