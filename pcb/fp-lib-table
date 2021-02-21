@@ -4,4 +4,5 @@
   (lib (name 67329-8040)(type Legacy)(uri ${KIPRJMOD}/library/67329-8040.mod)(options "")(descr ""))
   (lib (name FDA1254-H-8R0M=P3)(type Legacy)(uri ${KIPRJMOD}/library/FDA1254-H-8R0M=P3.mod)(options "")(descr ""))
   (lib (name TDK_SPM5030)(type KiCad)(uri ${KIPRJMOD}/library/TDK_SPM5030.pretty)(options "")(descr ""))
+  (lib (name U.FL-R-SMT-101)(type KiCad)(uri ${KIPRJMOD}/library/U.FL-R-SMT-101.pretty)(options "")(descr ""))
 )
