@@ -5,9 +5,9 @@
 #include <assert.h>
 #include "obd.h"
 #include "../src/HEXDUMP/hexdump.h"
-#include "car_struct.h"
+#include "../src/VehicleData/vehicle_data.h"
 
-#define DEBUG
+#define DEBUG false
 
 const uint8_t CanFlowMsg[] = {0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
@@ -39,7 +39,7 @@ void read_frame(uint32_t can_rx, struct can_frame* buffer) {
 	read_frame(can_rx, CAN_DEFAULT_READ_TIMEOUT, buffer);
 }
 
-void isotp_cmd(uint32_t can_rx, uint32_t can_tx, uint8_t* cmd, size_t cmd_len, uint8_t* data_buf, size_t data_buf_len) {
+void isotp_cmd(uint32_t can_rx, uint32_t can_tx, const uint8_t* cmd, size_t cmd_len, uint8_t* data_buf, size_t data_buf_len) {
 
 	assert(cmd_len < CAN_MAX_FRAME_LEN);
 
@@ -109,26 +109,6 @@ void isotp_cmd(uint32_t can_rx, uint32_t can_tx, uint8_t* cmd, size_t cmd_len, u
 	}
 
 	assert(data_offset == msg_len);	// Check if we got the amount of data we expected from the first frame
-}
-
-void car_decoder(float *evn, struct vehicle_d *vehicle) {
-	for (uint8_t cu_idx=0; cu_idx < vehicle->num_cu; cu_idx++) {
-		struct control_unit_d *cu = &vehicle->cu[cu_idx];
-		for (uint8_t cmd_idx=0; cmd_idx < cu->num_cmd; cmd_idx++) {
-			struct cmd_d *cmd = &cu->cmd[cmd_idx];
-			uint8_t buffer[cmd->return_bytes];
-			isotp_cmd(cu->rx, cu->tx, cmd->cmd, cmd->cmd_len, (uint8_t*)&buffer, cmd->return_bytes);
-			for (uint8_t field_idx=0; field_idx < cmd->num_field; field_idx++) {
-				struct field_d *field = &cmd->field[field_idx];
-				union value_d value;
-				value.uint32 = 0;
-				for (uint8_t i=0; i < field->length; i++) {
-					value.uint8[4-i] = buffer[field->position + i];
-				}
-				evn[field->field_id] = ((value.uint32 & field->mask) >> field->shift) * field->scale + field->offset;
-			}
-		}
-	}
 }
 
 // vim: ts=3 sw=3
