@@ -13,13 +13,15 @@
 #include "../src/OBD/obd.h"
 #include "../src/VehicleData/Hyundai_Ioniq/ioniq_bev.h"
 #include "../src/VehicleData/vehicle_data.h"
+#include "../src/GPS/gps.h"
 #include "./EvNotify/EvNotify.h"
-#include "gps.h"
 #include "pins.h"
 
 //Wifi Credentials
-const char* ap_ssid = "OBD32";
-const char* ap_password =  "secret";
+//const char* ap_ssid = "OBD32";
+//const char* ap_password =  "secret";
+const char* ap_ssid = "WERKSTATT";
+const char* ap_password =  "MsZL1uV5KJHL";
 const char* sta_ssid = "AP";
 const char* sta_password =  "PW";
 
@@ -30,6 +32,8 @@ const char* sta_password =  "PW";
 #define STATE_NORMAL 1
 #define STATE_SETUP 1<<1
 #define STATE_SETUP_RUNNING 1<<3
+#define evnotify_akey "bfddba"
+#define evnotify_token "ccf59da76a0caa94cb4a"
 
 WiFiMulti wifiMulti;
 WiFiClient espClient;
@@ -39,10 +43,10 @@ Adafruit_BMP280 bmp;
 TinyGPSPlus gps;
 HardwareSerial GPS_serial(2);
 HTTPClient http;
-
+GpsDataState_t gpsState = {};
+EvNotify evnotify_sender;
 int state = 0;
-char evnotify_akey[] ="bfddba";
-char evnotify_token[] = "ccf59da76a0caa94cb4a";
+
 
 void setup() {
    pinMode(GPIO_BTN1, INPUT_PULLUP);
@@ -70,6 +74,7 @@ void setup() {
       Serial.println("IP address: ");
       Serial.println(WiFi.localIP());
 
+      evnotify_sender.init(evnotify_akey, evnotify_token);
       Serial.println("Setup done.");
    }
 
