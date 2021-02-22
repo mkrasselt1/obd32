@@ -1,8 +1,10 @@
-#ifndef EVNOTIFY_H
-#define EVNOTIFY_H
+#ifndef EVNOTIFY_SENDER_H
+#define EVNOTIFY_SENDER_H
+
 
 #include <HTTPClient.h>
 #include "../VehicleData/vehicle_data.h"
+#include "../GPS/gps.h"
 
 #define evnotify_url_base "https://app.evnotify.de/"
 #define evnotify_url_login evnotify_url_base "login"
@@ -16,13 +18,16 @@
 
 class EvNotify{
     public:
-        void init(const char* akey, const char* token);
-        void sendSOC();
+        static void init(const char* akey, const char* token);
+        static void sendSOC();
+        static void sendLocation();
+        static void sendExtended();
     private:
-        HTTPClient https;
-        vehicle_data_struct vdata;
-        char akey[evnotify_akey_length];
-        char token[evnotify_token_length];
-        uint16_t sendHttp(const char* url, const char * data);
+        static HTTPClient https;
+        static vehicle_data_struct* vdata;
+        static GpsDataState_t* location;
+        static char akey[evnotify_akey_length];
+        static char token[evnotify_token_length];
+        static uint16_t sendHttp(const char* url, const char * data);
 };
 #endif
