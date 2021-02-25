@@ -39,7 +39,7 @@ WiFiMulti wifiMulti;
 WiFiClient espClient;
 WiFiClientSecure espClientSecure;
 TwoWire I2C = TwoWire(0);
-Adafruit_BMP280 bmp;
+Adafruit_BMP3XX bmp;
 TinyGPSPlus gps;
 HardwareSerial GPS_serial(2);
 HTTPClient http;
@@ -69,7 +69,7 @@ void setup() {
       while (WiFi.status() != WL_CONNECTED) {
         delay(500);
         Serial.print(".");
-      } 
+      }
       Serial.println("WiFi connected");
       Serial.println("IP address: ");
       Serial.println(WiFi.localIP());
