@@ -16,12 +16,15 @@
 #define evnotify_akey_length 6
 #define evnotify_token_length 20
 
-class EvNotify{
+class EvNotifySender{
     public:
-        static void init(const char* akey, const char* token);
+        static bool init(const char* akey, const char* token);
+        static bool start();
         static void sendSOC();
         static void sendLocation();
         static void sendExtended();
+        static void sendNotify(bool abort);
+        const char* getModuleName();
     private:
         static HTTPClient https;
         static vehicle_data_struct* vdata;
@@ -29,5 +32,6 @@ class EvNotify{
         static char akey[evnotify_akey_length];
         static char token[evnotify_token_length];
         static uint16_t sendHttp(const char* url, const char * data);
+        static void EvNotifyThread(void* args);
 };
 #endif
