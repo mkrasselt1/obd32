@@ -1,10 +1,11 @@
 #include <Arduino.h>
 #include <inttypes.h>
 #include <stdio.h>
-#include "../../OBD/obd.h"
+#include "../../OBD2/obd2.h"
 #include "../src/HEXDUMP/hexdump.h"
 #include "../vehicle_data.h"
 
+extern OBD2Reader OBD2ReaderService;
 #pragma pack(push, 1)
 struct {
 	uint8_t  pad0[6];
@@ -88,13 +89,13 @@ const uint8_t cmd22b002[] = {0x22, 0xb0, 0x02};
 const uint8_t cmd2180[] = {0x21, 0x80};
 
 void decode_ioniq_bev(vehicle_data_t* vdata) {
-	isotp_cmd(0x7ec, 0x7e4, cmd2101, sizeof(cmd2101), (uint8_t*)&b2101, sizeof(b2101));
-	isotp_cmd(0x7ec, 0x7e4, cmd2102, sizeof(cmd2102), (uint8_t*)&b2102, sizeof(b2102));
-	isotp_cmd(0x7ec, 0x7e4, cmd2103, sizeof(cmd2103), (uint8_t*)&b2103, sizeof(b2103));
-	isotp_cmd(0x7ec, 0x7e4, cmd2104, sizeof(cmd2104), (uint8_t*)&b2104, sizeof(b2104));
-	isotp_cmd(0x7ec, 0x7e4, cmd2105, sizeof(cmd2105), (uint8_t*)&b2105, sizeof(b2105));
-	isotp_cmd(0x7ee, 0x7e6, cmd2180, sizeof(cmd2180), (uint8_t*)&b2180, sizeof(b2180)); // might fail, how to handle?
-	isotp_cmd(0x7ce, 0x7c6, cmd22b002, sizeof(cmd22b002), (uint8_t*)&b22b002, sizeof(b22b002));
+	OBD2ReaderService.isotp_cmd(0x7ec, 0x7e4, cmd2101, sizeof(cmd2101), (uint8_t*)&b2101, sizeof(b2101));
+	OBD2ReaderService.isotp_cmd(0x7ec, 0x7e4, cmd2102, sizeof(cmd2102), (uint8_t*)&b2102, sizeof(b2102));
+	OBD2ReaderService.isotp_cmd(0x7ec, 0x7e4, cmd2103, sizeof(cmd2103), (uint8_t*)&b2103, sizeof(b2103));
+	OBD2ReaderService.isotp_cmd(0x7ec, 0x7e4, cmd2104, sizeof(cmd2104), (uint8_t*)&b2104, sizeof(b2104));
+	OBD2ReaderService.isotp_cmd(0x7ec, 0x7e4, cmd2105, sizeof(cmd2105), (uint8_t*)&b2105, sizeof(b2105));
+	OBD2ReaderService.isotp_cmd(0x7ee, 0x7e6, cmd2180, sizeof(cmd2180), (uint8_t*)&b2180, sizeof(b2180)); // might fail, how to handle?
+	OBD2ReaderService.isotp_cmd(0x7ce, 0x7c6, cmd22b002, sizeof(cmd22b002), (uint8_t*)&b22b002, sizeof(b22b002));
 
 	hexdump(b2101.dc_battery_voltage, 2, 8);
 

@@ -1,23 +1,8 @@
-#include <Arduino.h>
-#include <CAN.h>
-#include <inttypes.h>
-#include <stdlib.h>
-#include <assert.h>
-#include "obd.h"
-#include "../src/HEXDUMP/hexdump.h"
-#include "../src/VehicleData/vehicle_data.h"
+#include "obd2.h"
 
 #define DEBUG false
 
-const uint8_t CanFlowMsg[] = {0x30, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-
-struct can_frame {
-	uint32_t can_id;
-	size_t length;
-	uint8_t data[CAN_MAX_FRAME_LEN];
-};
-
-void read_frame(uint16_t can_rx, uint16_t timeout, struct can_frame* buffer) {
+void OBD2Reader::read_frame_timeout(uint16_t can_rx, can_frame* buffer, uint16_t timeout) {
 	// Busy wait for response
 
 	CAN.filter(can_rx);
@@ -35,11 +20,11 @@ void read_frame(uint16_t can_rx, uint16_t timeout, struct can_frame* buffer) {
 	CAN.readBytes(buffer->data, buffer->length);
 }
 
-void read_frame(uint32_t can_rx, struct can_frame* buffer) {
-	read_frame(can_rx, CAN_DEFAULT_READ_TIMEOUT, buffer);
+void OBD2Reader::read_frame(uint32_t can_rx, can_frame* buffer) {
+	read_frame_timeout(can_rx, buffer, CAN_DEFAULT_READ_TIMEOUT);
 }
 
-void isotp_cmd(uint32_t can_rx, uint32_t can_tx, const uint8_t* cmd, size_t cmd_len, uint8_t* data_buf, size_t data_buf_len) {
+void OBD2Reader::isotp_cmd(uint32_t can_rx, uint32_t can_tx, const uint8_t* cmd, size_t cmd_len, uint8_t* data_buf, size_t data_buf_len) {
 
 	assert(cmd_len < CAN_MAX_FRAME_LEN);
 
@@ -110,5 +95,6 @@ void isotp_cmd(uint32_t can_rx, uint32_t can_tx, const uint8_t* cmd, size_t cmd_
 
 	assert(data_offset == msg_len);	// Check if we got the amount of data we expected from the first frame
 }
+OBD2Reader OBD2ReaderService;
 
 // vim: ts=3 sw=3

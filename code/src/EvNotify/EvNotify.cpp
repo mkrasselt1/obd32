@@ -1,5 +1,7 @@
 #include "EvNotify.h"
 
+extern EvNotifySender EvNotify;
+
 #include <ArduinoJson.h>
 #include <WiFiClientSecure.h>
 #include <HTTPClient.h>
@@ -8,14 +10,44 @@
 WiFiClientSecure *client = new WiFiClientSecure;
 DynamicJsonDocument doc(1024);
     
+HTTPClient EvNotifySender::https;
+vehicle_data_struct* EvNotifySender::vdata;
+GpsDataState_t* EvNotifySender::location;
+char EvNotifySender::akey[evnotify_akey_length];
+char EvNotifySender::token[evnotify_token_length];
 
-void EvNotify::init(const char* akey, const char* token){
-    memcpy (&akey, EvNotify::akey, evnotify_akey_length);
-    memcpy(&token, EvNotify::token, evnotify_token_length);
+const char* EvNotifySender::getModuleName()
+{
+    return "EvNotify";
+}
+
+
+bool EvNotifySender::init(const char* user_akey, const char* user_token){
+    memcpy (&user_akey, akey, evnotify_akey_length);
+    memcpy(&user_token, token, evnotify_token_length);
     client->setCACert(root_ca);
+    return true;
 };
 
-void EvNotify::sendSOC(){
+bool EvNotifySender::start()
+{
+    xTaskCreate(EvNotifyThread, "EvNotify", 1024, NULL, 1, NULL);
+    return true;
+}
+
+
+void EvNotifySender::sendNotify(bool abort){
+    https.begin(evnotify_url_soc, root_ca);
+    https.addHeader("Content-Type", "application/json");
+    doc["akey"]     = akey;
+    doc["token"]    = token;
+    doc["abort"]      = abort;
+    char message[150];
+    serializeJson(doc, message);
+    sendHttp(evnotify_url_soc, message);
+}
+
+void EvNotifySender::sendSOC(){
     https.begin(evnotify_url_soc, root_ca);
     https.addHeader("Content-Type", "application/json");
     doc["akey"]     = akey;
@@ -27,7 +59,7 @@ void EvNotify::sendSOC(){
     sendHttp(evnotify_url_soc, message);
 };
 
-void EvNotify::sendLocation(){
+void EvNotifySender::sendLocation(){
     https.begin(evnotify_url_soc, root_ca);
     https.addHeader("Content-Type", "application/json");
     doc["akey"]     = akey;
@@ -40,7 +72,7 @@ void EvNotify::sendLocation(){
     sendHttp(evnotify_url_soc, message);
 };
 
-void EvNotify::sendExtended(){
+void EvNotifySender::sendExtended(){
     https.begin(evnotify_url_soc, root_ca);
     https.addHeader("Content-Type", "application/json");
     doc["akey"]     = akey;
@@ -66,10 +98,23 @@ void EvNotify::sendExtended(){
     sendHttp(evnotify_url_soc, message);
 };
 
-uint16_t EvNotify::sendHttp(const char* url, const char* data){
+uint16_t EvNotifySender::sendHttp(const char* url, const char* data){
     https.begin(evnotify_url_soc, root_ca);
     https.addHeader("Content-Type", "application/json");
     https.POST(data);
     https.end();
     return 1;
 };
+
+void EvNotifySender::EvNotifyThread(void* args)
+{
+    long lastsend = 0;
+    while (true){
+        if(millis()-lastsend>=5000){
+            EvNotify.sendSOC();
+        }
+        vTaskDelay(500 / portTICK_PERIOD_MS);
+    }    
+};
+
+EvNotifySender EvNotify;

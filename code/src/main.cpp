@@ -9,12 +9,11 @@
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BMP280.h>
-#include <TinyGPS++.h>
-#include "../src/OBD/obd.h"
+#include "../src/OBD2/obd2.h"
 #include "../src/VehicleData/Hyundai_Ioniq/ioniq_bev.h"
 #include "../src/VehicleData/vehicle_data.h"
 #include "../src/GPS/gps.h"
-#include "./EvNotify/EvNotify.h"
+#include "../src/EvNotify/EvNotify.h"
 #include "pins.h"
 
 //Wifi Credentials
@@ -34,19 +33,20 @@ const char* sta_password =  "PW";
 #define STATE_SETUP_RUNNING 1<<3
 #define evnotify_akey "bfddba"
 #define evnotify_token "ccf59da76a0caa94cb4a"
+#define CAN_PIN_RX 4
+#define CAN_PIN_TX 5
 
 WiFiMulti wifiMulti;
 WiFiClient espClient;
 WiFiClientSecure espClientSecure;
 TwoWire I2C = TwoWire(0);
 Adafruit_BMP280 bmp;
-TinyGPSPlus gps;
-HardwareSerial GPS_serial(2);
 HTTPClient http;
-GpsDataState_t gpsState = {};
-EvNotify evnotify_sender;
-int state = 0;
 
+extern EvNotifySender EvNotify;
+extern GPSReceiver GPS;
+
+int state = 0;
 
 void setup() {
    pinMode(GPIO_BTN1, INPUT_PULLUP);
@@ -57,7 +57,6 @@ void setup() {
 
    Serial.begin(115200);
    while (!Serial);
-   GPS_serial.begin(9600, SERIAL_8N1, GPIO_GPS_RX, GPIO_GPS_TX);
 
    if (digitalRead(GPIO_BTN1) == LOW) {
       WiFi.mode(WIFI_AP);
@@ -74,13 +73,15 @@ void setup() {
       Serial.println("IP address: ");
       Serial.println(WiFi.localIP());
 
-      evnotify_sender.init(evnotify_akey, evnotify_token);
+      EvNotify.init(evnotify_akey, evnotify_token);
+      GPS.init(GPIO_GPS_RX, GPIO_GPS_TX);
+      //Call once data is Ready
+      EvNotify.start();
+      GPS.start();
       Serial.println("Setup done.");
    }
 
 
-  //Start GPS
-  GPS_serial.begin(9600, SERIAL_8N1, 16, 17);
    //I2C.begin(GPIO_I2C0_SDA, GPIO_I2C0_SCL, I2C_SPEED);
    //if(bme.begin(&I2C));
    //bmp.readTemperature()
@@ -103,9 +104,5 @@ void setup() {
 void loop(){
   vehicle_data_t vdata;
   decode_ioniq_bev(&vdata);
-  //Read GPS
-  while (GPS_serial.available() > 0) {
-    gps.encode(GPS_serial.read());
-  }
 }
 // vim: sw=3 sts=3 expandtab
