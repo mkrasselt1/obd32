@@ -8,7 +8,7 @@
 #include <PubSubClient.h>
 #include <Wire.h>
 #include <Adafruit_Sensor.h>
-#include <Adafruit_BMP280.h>
+#include "Adafruit_BMP3XX.h"
 #include "../src/OBD2/obd2.h"
 #include "../src/VehicleData/Hyundai_Ioniq/ioniq_bev.h"
 #include "../src/VehicleData/vehicle_data.h"
@@ -40,7 +40,7 @@ WiFiMulti wifiMulti;
 WiFiClient espClient;
 WiFiClientSecure espClientSecure;
 TwoWire I2C = TwoWire(0);
-Adafruit_BMP280 bmp;
+Adafruit_BMP3XX bmp;
 HTTPClient http;
 
 extern EvNotifySender EvNotify;
@@ -68,7 +68,7 @@ void setup() {
       while (WiFi.status() != WL_CONNECTED) {
         delay(500);
         Serial.print(".");
-      } 
+      }
       Serial.println("WiFi connected");
       Serial.println("IP address: ");
       Serial.println(WiFi.localIP());
