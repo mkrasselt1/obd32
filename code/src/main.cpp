@@ -1,108 +1,244 @@
 #include <Arduino.h>
-#include <CAN.h>
-#include <WiFi.h>
-#include <HTTPClient.h>
-#include <WiFiMulti.h>
-#include <DNSServer.h>
-#include <ArduinoJson.h>
-#include <PubSubClient.h>
-#include <Wire.h>
-#include <Adafruit_Sensor.h>
-#include "Adafruit_BMP3XX.h"
-#include "../src/OBD2/obd2.h"
-#include "../src/VehicleData/Hyundai_Ioniq/ioniq_bev.h"
-#include "../src/VehicleData/vehicle_data.h"
-#include "../src/GPS/gps.h"
-#include "../src/EvNotify/EvNotify.h"
+#include <Update.h>
+#include "FS.h"
+#include "SPIFFS.h"
+#include "Wifi.h"
+#include <WiFiClient.h>
+#include <ESPmDNS.h>
+#include <AsyncTCP.h>
+#include <ESPAsyncWebServer.h>
 #include "pins.h"
 
-//Wifi Credentials
-//const char* ap_ssid = "OBD32";
-//const char* ap_password =  "secret";
-const char* ap_ssid = "WERKSTATT";
-const char* ap_password =  "MsZL1uV5KJHL";
-const char* sta_ssid = "AP";
-const char* sta_password =  "PW";
+const char *sta_ssid = "obd32";
+const char *sta_password = "obd32";
+const char *host = "obd32";
 
-#define vers "0.0.1"
+unsigned long previousMillis = 0; // will store last time LED was updated
+const long interval = 150;        // interval at which to blink (milliseconds)
+int ledState = 0;                 // ledState used to set the LED
+bool leddirection = false;           // direction of leds
+bool shouldReboot = false;        //flag to use from web update to reboot the ESP
 
-#define I2C_SPEED 100000 // 100kHz
+// Create AsyncWebServer object on port 80
+AsyncWebServer server(80);
+AsyncWebSocket ws("/ws");
+AsyncEventSource events("/events"); // event source (Server-Sent events)
 
-#define STATE_NORMAL 1
-#define STATE_SETUP 1<<1
-#define STATE_SETUP_RUNNING 1<<3
-#define evnotify_akey "bfddba"
-#define evnotify_token "ccf59da76a0caa94cb4a"
-#define CAN_PIN_RX 4
-#define CAN_PIN_TX 5
+void notifyClients()
+{
+    ws.textAll(String(ledState));
+}
 
-WiFiMulti wifiMulti;
-WiFiClient espClient;
-WiFiClientSecure espClientSecure;
-TwoWire I2C = TwoWire(0);
-Adafruit_BMP3XX bmp;
-HTTPClient http;
+void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
+{
+    AwsFrameInfo *info = (AwsFrameInfo *)arg;
+    if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT)
+    {
+        data[len] = 0;
+        if (strcmp((char *)data, "toggle") == 0)
+        {
+            ledState = !ledState;
+            notifyClients();
+        }
+    }
+}
 
-extern EvNotifySender EvNotify;
-extern GPSReceiver GPS;
+void onEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type,
+             void *arg, uint8_t *data, size_t len)
+{
+    switch (type)
+    {
+    case WS_EVT_CONNECT:
+        Serial.printf("WebSocket client #%u connected from %s\n", client->id(), client->remoteIP().toString().c_str());
+        break;
+    case WS_EVT_DISCONNECT:
+        Serial.printf("WebSocket client #%u disconnected\n", client->id());
+        break;
+    case WS_EVT_DATA:
+        handleWebSocketMessage(arg, data, len);
+        break;
+    case WS_EVT_PONG:
+    case WS_EVT_ERROR:
+        break;
+    }
+}
 
-int state = 0;
+// Replaces placeholder with LED state value
+String processor(const String &var)
+{
+    Serial.println(var);
+    if (var == "STATE")
+    {
+        Serial.print(ledState);
+        return String(ledState);
+    }
+    return String();
+}
 
-void setup() {
-   pinMode(GPIO_BTN1, INPUT_PULLUP);
-   pinMode(GPIO_USB_EN, OUTPUT);
-   pinMode(GPIO_LED_R, OUTPUT);
-   pinMode(GPIO_LED_G, OUTPUT);
-   pinMode(GPIO_LED_B, OUTPUT);
+void onRequest(AsyncWebServerRequest *request)
+{
+    //Handle Unknown Request
+    request->send(404);
+}
 
-   Serial.begin(115200);
-   while (!Serial);
+void setup()
+{
+    Serial.begin(115200);
 
-   if (digitalRead(GPIO_BTN1) == LOW) {
-      WiFi.mode(WIFI_AP);
-      WiFi.softAP(ap_ssid, ap_password);
-   }else {
-      //Start Wifi
-      WiFi.begin(sta_ssid, sta_password);
-      Serial.println("Connecting to WiFi");
-      while (WiFi.status() != WL_CONNECTED) {
+    pinMode(GPIO_BTN1, INPUT_PULLUP);
+    pinMode(GPIO_USB_EN, OUTPUT);
+    pinMode(GPIO_LED_R, OUTPUT);
+    pinMode(GPIO_LED_G, OUTPUT);
+    pinMode(GPIO_LED_B, OUTPUT);
+
+    // Initialize SPIFFS
+    if (!SPIFFS.begin(true))
+    {
+        Serial.println("An Error has occurred while mounting SPIFFS");
+        return;
+    }
+
+    WiFi.begin(sta_ssid, sta_password);
+    Serial.println("Connecting to WiFi");
+    while (WiFi.status() != WL_CONNECTED)
+    {
         delay(500);
         Serial.print(".");
-      }
-      Serial.println("WiFi connected");
-      Serial.println("IP address: ");
-      Serial.println(WiFi.localIP());
+    }
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
 
-      EvNotify.init(evnotify_akey, evnotify_token);
-      GPS.init(GPIO_GPS_RX, GPIO_GPS_TX);
-      //Call once data is Ready
-      EvNotify.start();
-      GPS.start();
-      Serial.println("Setup done.");
-   }
+    /*use mdns for host name resolution*/
+    if (!MDNS.begin(host))
+    { //http://esp32.local
+        Serial.println("Error setting up MDNS responder!");
+        while (1)
+        {
+            delay(1000);
+        }
+    }
 
+    Serial.println("mDNS responder started");
 
-   //I2C.begin(GPIO_I2C0_SDA, GPIO_I2C0_SCL, I2C_SPEED);
-   //if(bme.begin(&I2C));
-   //bmp.readTemperature()
-   //bmp.readPressure()
+    // Route for root / web page
+    server.serveStatic("/", SPIFFS, "/")
+        .setDefaultFile("index.html")
+        .setAuthentication("obd32", "obd32");
 
+    /*handling uploading firmware file */
 
-   //Start CAN
-   CAN.setPins(GPIO_CAN_RX, GPIO_CAN_TX);
-   while (true) {
-      if (!CAN.begin(CAN_BUS_SPEED)) {
-      	 Serial.println(F("Can init failed!"));
-      } else {
-      	 Serial.println(F("Can init success")); break;
-      }
-   }   while (!Serial);
-
-  // businessLogic::init(vers);
+    // upload a file to /upload
+    server.on(
+        "/update", HTTP_POST, [](AsyncWebServerRequest *request)
+        {
+            shouldReboot = !Update.hasError();
+            AsyncWebServerResponse *response = request->beginResponse(200, "text/plain", shouldReboot ? "OK" : "FAIL");
+            response->addHeader("Connection", "close");
+            request->send(response);
+        },
+        [](AsyncWebServerRequest *request, String filename, size_t index, uint8_t *data, size_t len, bool final)
+        {
+            if (!index)
+            {
+                Serial.printf("Update Start: %s\n", filename.c_str());
+                //Update.runAsync(true);
+                if (filename == "spiffs.bin")
+                {
+                    // size_t fsSize = ((size_t)&_FS_end - (size_t)&_FS_start);
+                    size_t fsSize = SPIFFS.totalBytes();
+                    SPIFFS.end();
+                    SPIFFS.begin();
+                    if (!Update.begin(fsSize, U_SPIFFS)) //start with max available size
+                    {
+                        Update.printError(Serial);
+                    }
+                }
+                else if (filename == "firmware.bin")
+                {
+                    if (!Update.begin((ESP.getFreeSketchSpace() - 0x1000) & 0xFFFFF000))
+                    {
+                        Update.printError(Serial);
+                    }
+                }
+                else
+                {
+                    Serial.println("Filename not matching");
+                }
+            }
+            if (!Update.hasError())
+            {
+                if (Update.write(data, len) != len)
+                {
+                    Update.printError(Serial);
+                }
+            }
+            if (final)
+            {
+                if (Update.end(true))
+                {
+                    Serial.printf("Update Success: %uB\n", index + len);
+                }
+                else
+                {
+                    Update.printError(Serial);
+                }
+            }
+        });
+    server.begin();
 }
 
-void loop(){
-  vehicle_data_t vdata;
-  decode_ioniq_bev(&vdata);
+void loop()
+{
+    ws.cleanupClients();
+    delay(1);
+    if (shouldReboot)
+    {
+        Serial.println("Rebooting...");
+        delay(100);
+        ESP.restart();
+    }
+    static char temp[128];
+    sprintf(temp, "Seconds since boot: %u", millis() / 1000);
+    events.send(temp, "time"); //send event "time"
+
+    //loop to blink without delay
+    unsigned long currentMillis = millis();
+    if (currentMillis - previousMillis >= interval)
+    {
+        // save the last time you blinked the LED
+        previousMillis = currentMillis;
+        if(leddirection){
+            ledState--;
+        }else{
+            ledState++;
+        }
+        
+        digitalWrite(GPIO_LED_R, false);
+        digitalWrite(GPIO_LED_G, false);
+        digitalWrite(GPIO_LED_B, false);
+        switch (ledState)
+        {
+        case 1:
+            digitalWrite(GPIO_LED_R, true);
+            break;
+        case 2:
+            digitalWrite(GPIO_LED_G, true);
+            break;
+        case 3:
+            digitalWrite(GPIO_LED_B, true);
+            break;
+        default:
+            leddirection=!leddirection;
+            if(leddirection){
+                ledState=4;
+            }else{
+                ledState=0;
+            }
+        }
+        // set the LED with the ledState of the variable:
+
+        Serial.print("Set LED to: ");
+        Serial.println(ledState);
+    }
 }
-// vim: sw=3 sts=3 expandtab

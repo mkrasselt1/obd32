@@ -10,7 +10,9 @@
 			"string": "cpp",
 			"vector": "cpp",
 			"*.tcc": "cpp",
-			"ostream": "cpp"
+			"ostream": "cpp",
+			"functional": "cpp",
+			"istream": "cpp"
 		}
 	}
 }

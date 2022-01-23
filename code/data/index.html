@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>OBD32</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel='stylesheet' type='text/css' media='screen' href='style.css'>
+    <script src='jquery.min.js'></script>
+    <script src='script.js'></script>
+</head>
+
+<body>
+    <form method='POST' action='/update' enctype='multipart/form-data' id='upload_form'>
+        <input type='file' name='update' id='file' onchange='sub(this)' style=display:none>
+        <label id='file-input' for='file'> W&auml;hle die Datei...</label>
+        <input type='submit' class=btn value='Update'>
+        <p>W&auml;hle firmware.bin f&uuml;r das Programm, spiffs.bin für die Daten</p>
+        <br><br>
+        <div id='prg'></div>
+        <br>
+        <div id='prgbar'>
+            <div id='bar'></div>
+        </div><br></form>
+</body>
+
+</html>
